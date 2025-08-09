@@ -40,17 +40,11 @@ For Software:
 For Software:
 
 # Screenshots (Add at least 3)
-![Screenshot1](<img width="1920" height="1080" alt="Screenshot 2025-08-09 173826" src="https://github.com/user-attachments/assets/15d4ca5a-6dd2-4e4d-a5bc-385d1893f8cd" />
-)
-starting page prompting starting of the interactive experience
 
-![Screenshot2](<img width="1920" height="1080" alt="Screenshot 2025-08-09 173848" src="https://github.com/user-attachments/assets/f4397241-9610-4f05-bfcc-4527d9f10e1c" />
-)
-2nd screen showing the google search page where the user interactiveness really start
+<img width="1920" height="1080" alt="Screenshot 2025-08-09 174416" src="https://github.com/user-attachments/assets/3244ef53-eb6b-41e0-8b7c-ad287e891219" />
+<img width="1920" height="1080" alt="Screenshot 2025-08-09 173907" src="https://github.com/user-attachments/assets/59328e7e-91fd-4da3-abb4-35f7ecd53495" />
+<img width="1920" height="1080" alt="Screenshot 2025-08-09 173848" src="https://github.com/user-attachments/assets/15fdde98-61a6-4186-8022-a61b3a93d1ca" />
 
-![Screenshot3](<img width="1920" height="1080" alt="Screenshot 2025-08-09 173907" src="https://github.com/user-attachments/assets/abbcb52e-c7a0-4c28-8ced-f9f424fa452d" />
-)
-set of tasks (actually some boring stuff i made but through the interactive layer it might seem more interesting)
 
 # Diagrams
 ![Workflow](<img width="1920" height="1080" alt="Screenshot 2025-08-09 174416" src="https://github.com/user-attachments/assets/8b1ad165-daf5-4778-b934-88af10868832" />
