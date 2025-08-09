@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meme Creator</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- html2canvas for the screenshot export functionality -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
+    <style>
+        /* Using a classic, bold meme font */
+        .meme-text {
+            font-family: 'Oswald', sans-serif;
+            text-transform: uppercase;
+            color: white;
+            -webkit-text-stroke: 1px black; /* Stroke for visibility on any background */
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+            cursor: move; /* Indicates the text is draggable */
+            user-select: none; /* Prevents text selection while dragging */
+        }
+        /* Custom styles for better UI feel */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+        /* Ensure the canvas for screenshotting doesn't show scrollbars */
+        #meme-canvas {
+            overflow: hidden;
+            transition: border-color 0.3s;
+        }
+        /* Style for the draggable image */
+        #meme-image {
+            cursor: grab;
+        }
+        #meme-image:active {
+            cursor: grabbing;
+        }
+        /* Style for the dropzone highlight */
+        .dropzone-active {
+            border-style: dashed !important;
+            border-width: 4px !important;
+            border-color: #3b82f6 !important; /* Tailwind's blue-500 */
+        }
+        /* Scale icon on hover */
+        .home-icon:hover {
+            transform: scale(1.1);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
+
+    <div class="w-full max-w-6xl mx-auto relative">
+        <!-- Home Icon Link -->
+        <a href="/kwerky.html" title="Go Home" class="home-icon absolute top-2 left-2 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md transition-transform duration-200 ease-in-out flex items-center justify-center">
+            <span class="material-icons">home</span>
+        </a>
+
+        <h1 class="text-4xl font-bold text-center mb-6">Meme Forge</h1>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+            <!-- Controls Panel -->
+            <div class="lg:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
+                <h2 class="text-2xl font-bold mb-4 border-b pb-2">Controls</h2>
+
+                <!-- Image Upload -->
+                <div class="mb-4">
+                    <label for="image-upload" class="block mb-2 font-semibold">1. Upload or Drop Image</label>
+                    <input type="file" id="image-upload" accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                </div>
+
+                <!-- Text Inputs -->
+                <div class="mb-4">
+                    <label for="top-text-input" class="block mb-2 font-semibold">2. Add Text</label>
+                    <input type="text" id="top-text-input" placeholder="Top Text" class="w-full p-2 rounded-lg bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500 mb-2">
+                    <input type="text" id="bottom-text-input" placeholder="Bottom Text" class="w-full p-2 rounded-lg bg-gray-200 dark:bg-gray-700 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                </div>
+                
+                <!-- Text Size Slider -->
+                <div class="mb-4">
+                    <label for="font-size-slider" class="block mb-2 font-semibold">Font Size: <span id="font-size-value">40</span>px</label>
+                    <input type="range" id="font-size-slider" min="10" max="100" value="40" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                </div>
+
+                <!-- Image Manipulation -->
+                <div class="mb-6">
+                    <label class="block mb-2 font-semibold">3. Stretch & Squash Image</label>
+                    <div class="mb-2">
+                        <label for="image-width-slider" class="text-sm">Width: <span id="image-width-value">100</span>%</label>
+                        <input type="range" id="image-width-slider" min="10" max="200" value="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                    </div>
+                    <div>
+                        <label for="image-height-slider" class="text-sm">Height: <span id="image-height-value">100</span>%</label>
+                        <input type="range" id="image-height-slider" min="10" max="200" value="100" class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer dark:bg-gray-700">
+                    </div>
+                     <p class="text-xs text-gray-500 mt-2">You can also click and drag the image to position it (for cropping).</p>
+                </div>
+
+                <!-- Action Buttons -->
+                <div>
+                    <h2 class="text-xl font-bold mb-4 border-b pb-2">Actions</h2>
+                    <button id="export-btn" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300 mb-2">Export Page</button>
+                    <button id="reset-btn" class="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300">Reset</button>
+                </div>
+                
+                <!-- Info/Error Message Box -->
+                <div id="info-box" class="hidden mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg">
+                    <div class="flex">
+                        <div class="py-1"><span class="material-icons" style="margin-right: 8px;">info</span></div>
+                        <div>
+                            <p class="font-bold">Note</p>
+                            <p id="info-text" class="text-sm">Some images from other websites might not export correctly due to security restrictions (CORS policy).</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meme Editor Canvas -->
+            <div class="lg:col-span-2 bg-gray-300 dark:bg-gray-700 rounded-2xl shadow-lg flex items-center justify-center p-4 min-h-[300px] lg:min-h-[500px]">
+                <div id="meme-canvas" class="relative w-full h-full bg-white dark:bg-gray-800 rounded-lg shadow-inner flex items-center justify-center border-2 border-transparent">
+                    <!-- Placeholder text -->
+                    <p id="placeholder-text" class="text-gray-500 text-center p-4">Drag & drop an image here, or use the upload button.</p>
+                    
+                    <!-- The image will be inserted here by JS -->
+                    <img id="meme-image" class="hidden absolute max-w-none" src="" alt="Meme background">
+
+                    <!-- Draggable Text Overlays -->
+                    <div id="top-text" class="meme-text absolute top-4 text-center w-full text-4xl" style="font-size: 40px;"></div>
+                    <div id="bottom-text" class="meme-text absolute bottom-4 text-center w-full text-4xl" style="font-size: 40px;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Element References
+        const imageUpload = document.getElementById('image-upload');
+        const memeCanvas = document.getElementById('meme-canvas');
+        const memeImage = document.getElementById('meme-image');
+        const placeholderText = document.getElementById('placeholder-text');
+        const infoBox = document.getElementById('info-box');
+        const infoText = document.getElementById('info-text');
+        
+        const topTextInput = document.getElementById('top-text-input');
+        const bottomTextInput = document.getElementById('bottom-text-input');
+        const topText = document.getElementById('top-text');
+        const bottomText = document.getElementById('bottom-text');
+
+        const fontSizeSlider = document.getElementById('font-size-slider');
+        const fontSizeValue = document.getElementById('font-size-value');
+
+        const imageWidthSlider = document.getElementById('image-width-slider');
+        const imageWidthValue = document.getElementById('image-width-value');
+        const imageHeightSlider = document.getElementById('image-height-slider');
+        const imageHeightValue = document.getElementById('image-height-value');
+
+        const exportBtn = document.getElementById('export-btn');
+        const resetBtn = document.getElementById('reset-btn');
+
+        // --- IMAGE HANDLING ---
+
+        // Function to process an image file (from upload or drag/drop)
+        function processImageFile(file) {
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    memeImage.crossOrigin = null; // Not needed for data URLs
+                    memeImage.src = e.target.result;
+                    showImage();
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        // Function to process an image from a URL (from drag/drop)
+        function processImageUrl(url) {
+            // Set crossOrigin to "anonymous" to attempt CORS request.
+            // This is required for html2canvas to read pixels from external images.
+            memeImage.crossOrigin = "anonymous";
+            memeImage.src = url;
+            showImage();
+            
+            // Show a warning to the user about potential CORS issues
+            infoText.innerText = 'Note: Images from other websites might not export correctly due to web security policies (CORS). If the export is blank, try downloading the image and uploading it from your computer.';
+            infoBox.classList.remove('hidden');
+        }
+        
+        // Function to show the image and hide the placeholder
+        function showImage() {
+            memeImage.classList.remove('hidden');
+            placeholderText.classList.add('hidden');
+            resetImageTransforms();
+        }
+
+        // --- UI & TEXT FUNCTIONS ---
+        
+        function updateText() {
+            topText.innerText = topTextInput.value;
+            bottomText.innerText = bottomTextInput.value;
+        }
+
+        function updateFontSize() {
+            const newSize = fontSizeSlider.value + 'px';
+            fontSizeValue.innerText = fontSizeSlider.value;
+            topText.style.fontSize = newSize;
+            bottomText.style.fontSize = newSize;
+        }
+
+        function updateImageSize() {
+            memeImage.style.width = `${imageWidthSlider.value}%`;
+            memeImage.style.height = `${imageHeightSlider.value}%`;
+            imageWidthValue.innerText = imageWidthSlider.value;
+            imageHeightValue.innerText = imageHeightSlider.value;
+        }
+
+        // --- ACTIONS ---
+
+        function exportMeme() {
+            document.activeElement.blur();
+            exportBtn.innerText = 'Generating...';
+            exportBtn.disabled = true;
+
+            // Use html2canvas on the entire body
+            html2canvas(document.body, { 
+                useCORS: true,
+                logging: false,
+                scale: 1.5
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'my-meme-page.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+                
+                exportBtn.innerText = 'Export Page';
+                exportBtn.disabled = false;
+            }).catch(err => {
+                console.error('Oops, something went wrong!', err);
+                // We don't use alert()
+                infoText.innerText = 'Error: Could not generate screenshot. See console for details.';
+                infoBox.classList.remove('hidden');
+                exportBtn.innerText = 'Export Page';
+                exportBtn.disabled = false;
+            });
+        }
+        
+        function resetEditor() {
+            imageUpload.value = '';
+            topTextInput.value = '';
+            bottomTextInput.value = '';
+            fontSizeSlider.value = 40;
+            updateText();
+            updateFontSize();
+            
+            memeImage.src = '';
+            memeImage.classList.add('hidden');
+            placeholderText.classList.remove('hidden');
+            infoBox.classList.add('hidden');
+            
+            resetImageTransforms();
+        }
+
+        function resetImageTransforms() {
+            imageWidthSlider.value = 100;
+            imageHeightSlider.value = 100;
+            updateImageSize();
+            memeImage.style.left = '50%';
+            memeImage.style.top = '50%';
+            memeImage.style.transform = 'translate(-50%, -50%)';
+        }
+
+        // --- DRAGGING & DROPPING LOGIC ---
+
+        function makeDraggable(element) {
+            let isDragging = false;
+            let offsetX, offsetY;
+
+            element.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                isDragging = true;
+                offsetX = e.clientX - element.getBoundingClientRect().left;
+                offsetY = e.clientY - element.getBoundingClientRect().top;
+                if(element.id === 'meme-image') element.style.cursor = 'grabbing';
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (isDragging) {
+                    const parentRect = memeCanvas.getBoundingClientRect();
+                    let newX = e.clientX - parentRect.left - offsetX;
+                    let newY = e.clientY - parentRect.top - offsetY;
+                    element.style.left = `${newX}px`;
+                    element.style.top = `${newY}px`;
+                    if(element.id === 'meme-image') {
+                       element.style.transform = 'translate(0, 0)';
+                    }
+                }
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+                if(element.id === 'meme-image') element.style.cursor = 'grab';
+            });
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            memeCanvas.classList.add('dropzone-active');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            memeCanvas.classList.remove('dropzone-active');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            memeCanvas.classList.remove('dropzone-active');
+            
+            // Check for dropped files first
+            const files = e.dataTransfer.files;
+            if (files && files.length > 0) {
+                processImageFile(files[0]);
+                return;
+            }
+
+            // If no files, check for dropped HTML (from another tab)
+            const html = e.dataTransfer.getData('text/html');
+            if (html) {
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const img = doc.querySelector('img');
+                if (img && img.src) {
+                    processImageUrl(img.src);
+                    return;
+                }
+            }
+            
+            // Fallback for simple text/url drops
+            const url = e.dataTransfer.getData('text/uri-list') || e.dataTransfer.getData('text/plain');
+            if (url) {
+                processImageUrl(url);
+            }
+        }
+
+        // --- INITIALIZATION ---
+
+        // File upload listener
+        imageUpload.addEventListener('change', (e) => processImageFile(e.target.files[0]));
+        
+        // Text input listeners
+        topTextInput.addEventListener('input', updateText);
+        bottomTextInput.addEventListener('input', updateText);
+        fontSizeSlider.addEventListener('input', updateFontSize);
+        
+        // Image manipulation listeners
+        imageWidthSlider.addEventListener('input', updateImageSize);
+        imageHeightSlider.addEventListener('input', updateImageSize);
+        
+        // Button listeners
+        exportBtn.addEventListener('click', exportMeme);
+        resetBtn.addEventListener('click', resetEditor);
+
+        // Make text elements and the image draggable
+        makeDraggable(topText);
+        makeDraggable(bottomText);
+        makeDraggable(memeImage);
+        
+        // Add drag-and-drop listeners to the canvas
+        memeCanvas.addEventListener('dragover', handleDragOver);
+        memeCanvas.addEventListener('dragleave', handleDragLeave);
+        memeCanvas.addEventListener('drop', handleDrop);
+        
+        // Initial setup
+        updateText();
+        updateFontSize();
+        resetImageTransforms();
+
+    </script>
+</body>
+</html>
