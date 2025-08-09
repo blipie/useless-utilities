@@ -3,128 +3,69 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Maze Runner - XP Edition</title>
+    <title>Maze Runner</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Tahoma&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Tahoma', sans-serif;
-            background-color: #3A6EA5; /* XP Bliss sky blue */
-        }
-        .xp-window {
-            background-color: #ECE9D8;
-            border: 1px solid #000;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-            border-top-left-radius: 8px;
-            border-top-right-radius: 8px;
-        }
-        .title-bar {
-            background: linear-gradient(to bottom, #0055E7, #0047D5);
-            padding: 4px 6px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            color: white;
-            font-weight: bold;
-            font-size: 14px;
-            border-top-left-radius: 6px;
-            border-top-right-radius: 6px;
-            cursor: default;
-        }
-        .window-buttons button {
-            width: 22px;
-            height: 20px;
-            border: 1px solid #fff;
-            background-color: #0055E7;
-            color: white;
-            font-size: 12px;
-            line-height: 20px;
-            text-align: center;
-            margin-left: 2px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .window-buttons button.close {
-            background-color: #E81123;
-        }
-        .window-buttons button:hover {
-            filter: brightness(1.2);
-        }
-        .window-buttons button:active {
-            filter: brightness(0.9);
-        }
-        .xp-content {
-            padding: 1rem;
+            font-family: 'Inter', sans-serif;
+            overflow: hidden; /* Prevent scrollbars from flashing during generation */
         }
         canvas {
-            background-color: #1a202c;
-            border: 1px inset #888;
+            background-color: #1a202c; /* dark gray */
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
         }
         .control-panel {
-            background-color: #ECE9D8;
-            padding-top: 1rem;
+            background-color: #2d3748; /* gray-800 */
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1rem;
         }
-        .xp-button, .xp-select, .xp-link-button {
-            background-color: #F0F0F0;
-            border: 1px solid #000;
-            border-style: outset;
-            padding: 6px 12px;
-            font-family: 'Tahoma', sans-serif;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .xp-button:active, .xp-link-button:active {
-            border-style: inset;
-        }
-        .xp-button:disabled {
-            color: #888;
+        button:disabled {
+            opacity: 0.5;
             cursor: not-allowed;
         }
     </style>
 </head>
-<body class="flex items-center justify-center h-screen p-4">
+<body class="bg-gray-900 text-white flex items-center justify-center h-screen">
 
-    <div class="xp-window w-full max-w-2xl">
-        <div class="title-bar">
-            <span>Maze Runner</span>
-            <div class="window-buttons flex">
-                <button aria-label="Minimize">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 8H8V6H0V8Z" fill="white"/></svg>
-                </button>
-                <button aria-label="Maximize">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H10V1H0V0ZM10 1V9H9V1H10ZM9 9H0V10H9V9ZM0 9V1H1V9H0Z" fill="white"/></svg>
-                </button>
-                <button class="close" aria-label="Close">
-                    <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M1 0L0 1L4 5L0 9L1 10L5 6L9 10L10 9L6 5L10 1L9 0L5 4L1 0Z" fill="white"/></svg>
-                </button>
-            </div>
+    <div id="main-container" class="w-full max-w-4xl p-4">
+        <div class="flex justify-between items-center mb-4">
+            <a href="/kwerky.html" class="p-2 rounded-full hover:bg-gray-700 transition-colors" aria-label="Go to Home">
+                <svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" class="fill-current text-white">
+                    <path d="M0 0h24v24H0V0z" fill="none"/>
+                    <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/>
+                </svg>
+            </a>
+            <h1 class="text-4xl font-bold text-center text-cyan-400 flex-grow">Maze Runner</h1>
+            <div class="w-12"></div> <!-- Spacer to keep title centered -->
         </div>
-        <div class="xp-content">
-            <!-- Game Canvas -->
-            <div class="relative w-full aspect-[4/3]">
-                 <canvas id="game-canvas" class="w-full h-full"></canvas>
-            </div>
+        
+        <!-- Game Canvas -->
+        <div class="relative w-full aspect-[4/3]">
+             <canvas id="game-canvas" class="w-full h-full"></canvas>
+        </div>
 
-            <!-- Controls -->
-            <div class="control-panel grid grid-cols-3 sm:grid-cols-6 gap-2 items-center">
-                <div id="timer" class="text-lg font-mono bg-white border border-gray-400 p-2 text-black text-center col-span-3 sm:col-span-2">
-                    0.00s
-                </div>
-                <select id="difficulty" class="xp-select w-full col-span-3 sm:col-span-2">
-                    <option value="0">Easy</option>
-                    <option value="1">Standard</option>
-                    <option value="2">Hard</option>
-                </select>
-                <a href="/index.html" class="xp-link-button w-full" aria-label="Home">
-                    <svg xmlns="http://www.w3.org/2000/svg" height="18px" viewBox="0 0 24 24" width="18px" fill="#000000"><path d="M0 0h24v24H0V0z" fill="none"/><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8h5z"/></svg>
-                </a>
-                <button id="solution-button" class="xp-button w-full">Solve</button>
-                <button id="pause-button" class="xp-button w-full">Pause</button>
-                <button id="start-button" class="xp-button w-full">Start</button>
+        <!-- Controls -->
+        <div class="control-panel grid grid-cols-2 sm:grid-cols-5 gap-4 items-center mt-4">
+            <div id="timer" class="text-2xl font-mono bg-gray-900 p-3 rounded-lg text-center col-span-2 sm:col-span-1">
+                Time: 0.00s
             </div>
+            <select id="difficulty" class="bg-gray-700 border border-gray-600 rounded-lg p-3 text-lg focus:ring-cyan-500 focus:border-cyan-500 w-full">
+                <option value="0">Easy</option>
+                <option value="1">Standard</option>
+                <option value="2">Hard</option>
+            </select>
+            <button id="solution-button" class="bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105 w-full">
+                Solve
+            </button>
+            <button id="pause-button" class="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105 w-full">
+                Pause
+            </button>
+            <button id="start-button" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-3 px-4 rounded-lg text-lg transition-transform transform hover:scale-105 w-full">
+                Start Game
+            </button>
         </div>
     </div>
 
@@ -157,25 +98,57 @@
         let maze, player, goal;
         let activeCellSize = 20;
         let mazeWidth, mazeHeight;
-        let gameState = 'waiting';
+        let gameState = 'waiting'; // 'waiting', 'playing', 'paused', 'finished', 'generating'
         let solutionPath = null;
         
         // --- Timer State ---
         let timerInterval;
         let startTime;
-        let elapsedTime = 0;
+        let elapsedTime = 0; // Time in ms, excluding pauses
 
         // --- Player Physics ---
-        const playerProps = { vx: 0, vy: 0, speed: 0.3, maxSpeed: 3, friction: 0.95, color: '#38bdf8' };
-        const keys = { ArrowUp: false, ArrowDown: false, ArrowLeft: false, ArrowRight: false };
+        const playerProps = {
+            vx: 0,
+            vy: 0,
+            speed: 0.3,
+            maxSpeed: 3,
+            friction: 0.95,
+            color: '#38bdf8', // light blue
+        };
+
+        const keys = {
+            ArrowUp: false,
+            ArrowDown: false,
+            ArrowLeft: false,
+            ArrowRight: false
+        };
 
         // --- Event Listeners ---
-        window.addEventListener('keydown', (e) => { if (keys.hasOwnProperty(e.key)) { e.preventDefault(); if (gameState === 'playing') keys[e.key] = true; } });
-        window.addEventListener('keyup', (e) => { if (keys.hasOwnProperty(e.key)) { e.preventDefault(); keys[e.key] = false; } });
-        startButton.addEventListener('click', () => { if (gameState === 'playing' || gameState === 'paused' || gameState === 'finished') { resetToWelcome(); } else { startGame(); } });
+        window.addEventListener('keydown', (e) => {
+            if (keys.hasOwnProperty(e.key)) {
+                e.preventDefault();
+                if (gameState === 'playing') keys[e.key] = true;
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (keys.hasOwnProperty(e.key)) {
+                e.preventDefault();
+                keys[e.key] = false;
+            }
+        });
+
+        startButton.addEventListener('click', () => {
+            if (gameState === 'playing' || gameState === 'paused' || gameState === 'finished') {
+                resetToWelcome();
+            } else {
+                startGame();
+            }
+        });
+
         pauseButton.addEventListener('click', togglePause);
         solutionButton.addEventListener('click', showSolution);
         playAgainButton.addEventListener('click', resetToWelcome);
+        
         window.addEventListener('resize', resizeCanvas);
 
         // --- Initial Setup ---
@@ -190,6 +163,7 @@
             const container = canvas.parentElement;
             canvas.width = container.clientWidth;
             canvas.height = container.clientHeight;
+            
             if (gameState !== 'waiting' && gameState !== 'generating') {
                 activeCellSize = Math.min(canvas.width / mazeWidth, canvas.height / mazeHeight);
                 draw();
@@ -209,7 +183,7 @@
         function resetToWelcome() {
             hideWinModal();
             gameState = 'waiting';
-            startButton.textContent = 'Start';
+            startButton.textContent = 'Start Game';
             difficultySelect.disabled = false;
             pauseButton.disabled = true;
             solutionButton.disabled = true;
@@ -221,24 +195,42 @@
         function startGame() {
             startButton.disabled = true;
             difficultySelect.disabled = true;
-            startButton.textContent = '...';
+            startButton.textContent = 'Generating...';
             gameState = 'generating';
             solutionPath = null;
             
             setTimeout(() => {
                 const difficulty = difficultySelect.value;
-                if (difficulty === '0') { activeCellSize = 40; }
-                else if (difficulty === '1') { activeCellSize = 30; }
-                else { activeCellSize = 20; }
+                if (difficulty === '0') { // Easy
+                    activeCellSize = 40;
+                } else if (difficulty === '1') { // Standard
+                    activeCellSize = 30;
+                } else { // Hard
+                    activeCellSize = 20;
+                }
 
                 mazeWidth = Math.floor(canvas.width / activeCellSize);
                 mazeHeight = Math.floor(canvas.height / activeCellSize);
                 
-                if (difficulty === '2') { maze = generateWilsonsMaze(mazeWidth, mazeHeight); }
-                else { maze = generateStandardMaze(mazeWidth, mazeHeight); }
+                if (difficulty === '2') {
+                    maze = generateWilsonsMaze(mazeWidth, mazeHeight);
+                } else {
+                    maze = generateStandardMaze(mazeWidth, mazeHeight);
+                }
 
-                player = { x: activeCellSize / 2, y: activeCellSize / 2, ...playerProps, size: activeCellSize / 2.5 };
-                goal = { x: (mazeWidth - 1) * activeCellSize + activeCellSize / 2, y: (mazeHeight - 1) * activeCellSize + activeCellSize / 2, size: activeCellSize / 2, color: '#4ade80' };
+                player = {
+                    x: activeCellSize / 2,
+                    y: activeCellSize / 2,
+                    ...playerProps,
+                    size: activeCellSize / 2.5
+                };
+
+                goal = {
+                    x: (mazeWidth - 1) * activeCellSize + activeCellSize / 2,
+                    y: (mazeHeight - 1) * activeCellSize + activeCellSize / 2,
+                    size: activeCellSize / 2,
+                    color: '#4ade80'
+                };
 
                 resetTimer();
                 startTimer();
@@ -248,7 +240,7 @@
                 pauseButton.disabled = false;
                 solutionButton.disabled = false;
                 pauseButton.textContent = 'Pause';
-                startButton.textContent = 'Restart';
+                startButton.textContent = 'Restart Game';
                 gameLoop();
             }, 50);
         }
@@ -269,7 +261,9 @@
         
         function showSolution() {
             if (gameState !== 'playing' && gameState !== 'paused') return;
-            if (!solutionPath) { solutionPath = findSolution(); }
+            if (!solutionPath) {
+                solutionPath = findSolution();
+            }
             solutionButton.disabled = true;
             draw();
         }
@@ -406,28 +400,48 @@
             player.vx *= player.friction;
             player.vx = Math.max(-player.maxSpeed, Math.min(player.maxSpeed, player.vx));
             player.vy = Math.max(-player.maxSpeed, Math.min(player.maxSpeed, player.vy));
-            let nextX = player.x + player.vx;
-            let nextY = player.y + player.vy;
             const r = player.size / 2;
-            let currentCellX = Math.floor(player.x / activeCellSize);
-            let currentCellY = Math.floor(player.y / activeCellSize);
-
-            if (player.vx > 0 && maze[currentCellY][currentCellX].walls.right && nextX + r > (currentCellX + 1) * activeCellSize) {
-                player.vx = 0;
-                nextX = (currentCellX + 1) * activeCellSize - r;
-            } else if (player.vx < 0 && maze[currentCellY][currentCellX].walls.left && nextX - r < currentCellX * activeCellSize) {
-                player.vx = 0;
-                nextX = currentCellX * activeCellSize + r;
+            const wallThickness = 2;
+            let nextX = player.x + player.vx;
+            let gridYTop = Math.floor((player.y - r) / activeCellSize);
+            let gridYBottom = Math.floor((player.y + r) / activeCellSize);
+            if (player.vx > 0) {
+                let gridX = Math.floor((nextX + r) / activeCellSize);
+                if ((maze[gridYTop]?.[gridX - 1]?.walls.right) || (maze[gridYBottom]?.[gridX - 1]?.walls.right)) {
+                    player.x = gridX * activeCellSize - r - wallThickness;
+                    player.vx = 0;
+                } else {
+                    player.x = nextX;
+                }
+            } else if (player.vx < 0) {
+                let gridX = Math.floor((nextX - r) / activeCellSize);
+                 if ((maze[gridYTop]?.[gridX]?.walls.left) || (maze[gridYBottom]?.[gridX]?.walls.left)) {
+                    player.x = (gridX + 1) * activeCellSize + r + wallThickness;
+                    player.vx = 0;
+                } else {
+                    player.x = nextX;
+                }
             }
-            if (player.vy > 0 && maze[currentCellY][currentCellX].walls.bottom && nextY + r > (currentCellY + 1) * activeCellSize) {
-                player.vy = 0;
-                nextY = (currentCellY + 1) * activeCellSize - r;
-            } else if (player.vy < 0 && maze[currentCellY][currentCellX].walls.top && nextY - r < currentCellY * activeCellSize) {
-                player.vy = 0;
-                nextY = currentCellY * activeCellSize + r;
+            let nextY = player.y + player.vy;
+            let gridXLeft = Math.floor((player.x - r) / activeCellSize);
+            let gridXRight = Math.floor((player.x + r) / activeCellSize);
+            if (player.vy > 0) {
+                let gridY = Math.floor((nextY + r) / activeCellSize);
+                if ((maze[gridY - 1]?.[gridXLeft]?.walls.bottom) || (maze[gridY - 1]?.[gridXRight]?.walls.bottom)) {
+                    player.y = gridY * activeCellSize - r - wallThickness;
+                    player.vy = 0;
+                } else {
+                    player.y = nextY;
+                }
+            } else if (player.vy < 0) {
+                let gridY = Math.floor((nextY - r) / activeCellSize);
+                if ((maze[gridY]?.[gridXLeft]?.walls.top) || (maze[gridY]?.[gridXRight]?.walls.top)) {
+                    player.y = (gridY + 1) * activeCellSize + r + wallThickness;
+                    player.vy = 0;
+                } else {
+                    player.y = nextY;
+                }
             }
-            player.x = nextX;
-            player.y = nextY;
         }
 
 
@@ -497,13 +511,13 @@
         function drawGoal() { ctx.fillStyle = goal.color; ctx.beginPath(); ctx.arc(goal.x, goal.y, goal.size, 0, Math.PI * 2); ctx.fill(); }
 
         // --- Timer ---
-        function resetTimer() { clearInterval(timerInterval); elapsedTime = 0; timerEl.textContent = '0.00s'; }
+        function resetTimer() { clearInterval(timerInterval); elapsedTime = 0; timerEl.textContent = 'Time: 0.00s'; }
         function startTimer() {
             startTime = Date.now();
             timerInterval = setInterval(() => {
                 const currentSegmentTime = Date.now() - startTime;
                 const totalTime = elapsedTime + currentSegmentTime;
-                timerEl.textContent = `${(totalTime / 1000).toFixed(2)}s`;
+                timerEl.textContent = `Time: ${(totalTime / 1000).toFixed(2)}s`;
             }, 100);
         }
         function pauseTimer() { clearInterval(timerInterval); elapsedTime += Date.now() - startTime; }
@@ -525,4 +539,3 @@
     </script>
 </body>
 </html>
-
