@@ -10,7 +10,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://css.gg/css?=|info" rel="stylesheet">
+    <!-- Google Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&family=Oswald:wght@700&display=swap" rel="stylesheet">
     <style>
         /* Using a classic, bold meme font */
@@ -45,11 +46,20 @@
             border-width: 4px !important;
             border-color: #3b82f6 !important; /* Tailwind's blue-500 */
         }
+        /* Scale icon on hover */
+        .home-icon:hover {
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 flex flex-col items-center justify-center min-h-screen p-4">
 
-    <div class="w-full max-w-6xl mx-auto">
+    <div class="w-full max-w-6xl mx-auto relative">
+        <!-- Home Icon Link -->
+        <a href="/index.html" title="Go Home" class="home-icon absolute top-2 left-2 p-2 bg-white dark:bg-gray-800 rounded-full shadow-md transition-transform duration-200 ease-in-out flex items-center justify-center">
+            <span class="material-icons">home</span>
+        </a>
+
         <h1 class="text-4xl font-bold text-center mb-6">Meme Creator</h1>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -101,7 +111,7 @@
                 <!-- Info/Error Message Box -->
                 <div id="info-box" class="hidden mt-4 p-3 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 rounded-lg">
                     <div class="flex">
-                        <div class="py-1"><i class="gg-info" style="margin-right: 8px;"></i></div>
+                        <div class="py-1"><span class="material-icons" style="margin-right: 8px;">info</span></div>
                         <div>
                             <p class="font-bold">Note</p>
                             <p id="info-text" class="text-sm">Some images from other websites might not export correctly due to security restrictions (CORS policy).</p>

@@ -3,191 +3,352 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KWERKY.IO - Project Dashboard</title>
+    <title>KWERKY.IO - GBA Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen&display=swap" rel="stylesheet">
     <style>
-        /* Custom styles for the retro terminal look */
+        /* GBA-inspired aesthetic */
         body {
-            font-family: 'VT323', monospace;
-            background-color: #0a0a0a;
-            color: #00ff41;
-            /* Add a subtle texture over the background */
-            background-image: radial-gradient(rgba(0, 255, 65, 0.15) 1px, transparent 0);
-            background-size: 5px 5px;
-            overflow-x: hidden;
+            font-family: 'Silkscreen', sans-serif;
+            background-color: #d1d5db; /* Light grey background */
+            color: #374151;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 1rem;
         }
 
-        /* CRT scanline effect */
-        .crt-screen::after {
-            content: " ";
-            display: block;
-            position: absolute;
-            top: 0;
-            left: 0;
-            bottom: 0;
-            right: 0;
-            background: linear-gradient(to bottom, rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
-            z-index: 2;
-            background-size: 100% 4px, 3px 100%;
-            pointer-events: none;
-            animation: scanline 10s linear infinite;
-        }
-
-        @keyframes scanline {
-            0% { background-position: 0 0; }
-            100% { background-position: 0 100%; }
-        }
-
-        /* Text flicker animation */
-        @keyframes text-flicker {
-            0%, 100% { opacity: 1; text-shadow: 0 0 8px #00ff41, 0 0 12px #00ff41; }
-            50% { opacity: 0.8; text-shadow: 0 0 6px #00ff41, 0 0 10px #00ff41; }
-        }
-        
-        .flicker {
-            animation: text-flicker 3s infinite;
-        }
-
-        /* Custom font families */
         .font-press-start {
             font-family: 'Press Start 2P', cursive;
         }
+
+        /* The main GBA console body */
+        .gba-container {
+            background-color: #4f46e5; /* Indigo/Purple GBA color */
+            border-radius: 1rem 1rem 4rem 1rem;
+            padding: 1.5rem;
+            width: 100%;
+            max-width: 1000px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2), inset 0 0 15px rgba(0,0,0,0.4);
+            display: flex;
+            flex-direction: column;
+            border: 2px solid #3b33b5;
+        }
+
+        /* The "screen" area */
+        .gba-screen {
+            background-color: #9ca3af; /* Screen background color */
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            box-shadow: inset 0 0 10px #374151;
+            border: 4px solid #1f2937;
+            margin-bottom: 1.5rem;
+        }
+
+        /* Decorative elements container */
+        .gba-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 1rem;
+            user-select: none; /* Prevent text selection on controls */
+        }
+
+        /* D-Pad styling */
+        .d-pad { position: relative; width: 90px; height: 90px; }
+        .d-pad .vertical, .d-pad .horizontal {
+            background-color: #1f2937;
+            position: absolute;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.1s ease;
+            pointer-events: none; /* Visuals don't capture mouse events */
+        }
+        /* Style for when D-pad is pressed */
+        .d-pad .vertical.pressed, .d-pad .horizontal.pressed {
+            transform: translateY(1px);
+            box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+            background-color: #374151;
+        }
+        .d-pad .vertical { width: 30px; height: 90px; left: 30px; top: 0; border-radius: 6px; }
+        .d-pad .horizontal { width: 90px; height: 30px; left: 0; top: 30px; border-radius: 6px; }
         
-        .font-vt323 {
-            font-family: 'VT323', monospace;
+        /* Clickable areas for D-pad (overlays) */
+        .d-pad .up, .d-pad .down, .d-pad .left, .d-pad .right {
+            position: absolute;
+            cursor: pointer;
+            z-index: 1;
         }
+        .d-pad .up { top: 0; left: 30px; width: 30px; height: 30px; }
+        .d-pad .down { bottom: 0; left: 30px; width: 30px; height: 30px; }
+        .d-pad .left { top: 30px; left: 0; width: 30px; height: 30px; }
+        .d-pad .right { top: 30px; right: 0; width: 30px; height: 30px; }
 
-        /* Glassmorphism effect for project cards */
-        .glass-card {
-            background: rgba(0, 255, 65, 0.05);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border: 1px solid rgba(0, 255, 65, 0.2);
-            transition: all 0.3s ease;
+
+        /* A and B buttons styling */
+        .ab-buttons { display: flex; gap: 1rem; }
+        .ab-buttons .button {
+            width: 50px; height: 50px; border-radius: 50%; display: flex; justify-content: center; align-items: center;
+            font-family: 'Press Start 2P', cursive; color: rgba(255,255,255,0.7); font-size: 1.25rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3), inset 0 -4px 2px rgba(0,0,0,0.2);
+            border: 2px solid rgba(0,0,0,0.4); transition: all 0.1s ease; cursor: pointer;
         }
-
-        .glass-card:hover {
-            background: rgba(0, 255, 65, 0.1);
-            border-color: rgba(0, 255, 65, 0.5);
-            transform: translateY(-5px);
-            box-shadow: 0 0 20px rgba(0, 255, 65, 0.3);
+        .ab-buttons .button:active, .ab-buttons .button.pressed {
+            transform: translateY(2px);
+            box-shadow: 0 2px 3px rgba(0,0,0,0.3), inset 0 -2px 1px rgba(0,0,0,0.2);
+        }
+        .button.a-button { background-color: #ef4444; /* Red */ }
+        .button.b-button { background-color: #22c55e; /* Green */ }
+        
+        /* Project card styling */
+        .project-card {
+            background-color: #e5e7eb; border: 3px solid #4b5563; border-radius: 0.5rem;
+            transition: all 0.2s ease-in-out; cursor: pointer;
+        }
+        .project-card:hover { transform: scale(1.03); }
+        /* Selected state for the card */
+        .project-card.selected {
+            border-color: #ef4444;
+            transform: scale(1.05);
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.5);
         }
         
-        /* Custom scrollbar */
-        ::-webkit-scrollbar {
-            width: 8px;
+        /* Launch button styling */
+        .launch-button {
+            background-color: #374151; color: #e5e7eb; border: 3px solid #1f2937;
+            box-shadow: 0 4px 0 0 #111827; transition: all 0.1s ease-in-out;
         }
-        ::-webkit-scrollbar-track {
-            background: #0a0a0a;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #00ff41;
-            border-radius: 4px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #5eff8a;
+        .launch-button:hover { background-color: #4b5563; }
+        .launch-button:active, .launch-button.pressed {
+            transform: translateY(4px);
+            box-shadow: none;
         }
 
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            body { align-items: flex-start; }
+            .gba-container { flex-direction: column; border-radius: 1rem; }
+            .gba-controls { flex-direction: column; gap: 2rem; margin-top: 1rem; }
+        }
     </style>
 </head>
-<body class="min-h-screen p-4 sm:p-6 lg:p-8 crt-screen">
+<body>
 
-    <div class="max-w-7xl mx-auto">
-        <!-- Header Section -->
-        <header class="text-center mb-12">
-            <h1 id="main-title" class="font-press-start text-3xl sm:text-4xl lg:text-5xl flicker">KWERKY.IO</h1>
-            <p class="font-vt323 text-xl sm:text-2xl mt-2 text-cyan-400">Creative Project Mainframe</p>
-        </header>
+    <div class="gba-container" tabindex="0"> <!-- Made container focusable -->
+        <!-- Screen Area -->
+        <div class="gba-screen">
+            <header class="text-center mb-8">
+                <h1 class="font-press-start text-2xl sm:text-3xl text-gray-800 tracking-tighter">KWERKY.IO</h1>
+            </header>
 
-        <!-- Projects Grid -->
-        <main class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
+            <main class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Project 1: Maze Runner -->
+                <div class="project-card p-4 flex flex-col" data-index="0">
+                    <div class="flex-grow">
+                        <h2 class="font-press-start text-lg text-indigo-700 mb-2">Maze Runner</h2>
+                        <p class="text-md mb-4">A digital labyrinth for humans, inspired by Micromouse. Can you find the exit faster than our AI?</p>
+                    </div>
+                    <a href="/maze-runner/index.html" class="launch-button mt-auto w-full text-center font-press-start text-sm py-3 rounded-md">SELECT</a>
+                </div>
+
+                <!-- Project 2: MemeForge -->
+                <div class="project-card p-4 flex flex-col" data-index="1">
+                    <div class="flex-grow">
+                        <h2 class="font-press-start text-lg text-indigo-700 mb-2">MemeForge</h2>
+                        <p class="text-md mb-4">Forge the dankest memes. A powerful tool for the modern digital blacksmith. Use responsibly.</p>
+                    </div>
+                    <a href="/meme-forge/index.html" class="launch-button mt-auto w-full text-center font-press-start text-sm py-3 rounded-md">SELECT</a>
+                </div>
+
+                <!-- Project 3: Plant Gen -->
+                <div class="project-card p-4 flex flex-col" data-index="2">
+                    <div class="flex-grow">
+                        <h2 class="font-press-start text-lg text-indigo-700 mb-2">Plant Gen</h2>
+                        <p class="text-md mb-4">Generate beautiful, complex plant-like structures using the power of L-System algorithms.</p>
+                    </div>
+                    <a href="/plant-gen/index.html" class="launch-button mt-auto w-full text-center font-press-start text-sm py-3 rounded-md">SELECT</a>
+                </div>
+
+                <!-- Future Project Slot -->
+                <div class="project-card p-4 flex flex-col opacity-70" data-index="3">
+                    <div class="flex-grow">
+                        <h2 class="font-press-start text-lg text-gray-500 mb-2">???</h2>
+                        <p class="text-md mb-4 text-gray-600">Another project is on the horizon. Stay tuned for the next level!</p>
+                    </div>
+                    <button disabled class="launch-button mt-auto w-full text-center font-press-start text-sm py-3 rounded-md opacity-50 cursor-not-allowed">LOCKED</button>
+                </div>
+            </main>
+        </div>
+
+        <!-- Controls Area -->
+        <div class="gba-controls">
+            <div class="d-pad">
+                <div class="vertical"></div>
+                <div class="horizontal"></div>
+                <!-- Clickable overlays -->
+                <div class="up" data-direction="up"></div>
+                <div class="down" data-direction="down"></div>
+                <div class="left" data-direction="left"></div>
+                <div class="right" data-direction="right"></div>
+            </div>
             
-            <!-- Project 1: Maze Runner -->
-            <div class="glass-card rounded-lg p-6 flex flex-col">
-                <div class="flex-grow">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4">🏃‍♂️</span>
-                        <h2 class="font-press-start text-xl text-amber-400">Maze Runner</h2>
-                    </div>
-                    <p class="font-vt323 text-lg mb-6">
-                        A digital labyrinth for humans, inspired by Micromouse. Can you find the exit faster than our AI?
-                    </p>
+            <div class="flex items-center">
+                <div class="text-center mr-8">
+                    <h3 class="font-press-start text-lg text-gray-300">HACKATHON</h3>
+                    <p class="font-silkscreen text-md text-gray-400">PROJECT SELECT</p>
                 </div>
-                <a href="/maze-runner/index.html" class="mt-auto w-full text-center font-press-start text-lg bg-green-500 text-black py-3 rounded-md hover:bg-green-400 transition-colors duration-300 shadow-[0_5px_0_0_#00a82b] hover:shadow-[0_3px_0_0_#00a82b] hover:translate-y-[2px]">
-                    LAUNCH
-                </a>
-            </div>
-
-            <!-- Project 2: Meme Editor -->
-            <div class="glass-card rounded-lg p-6 flex flex-col">
-                <div class="flex-grow">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4">😂</span>
-                        <h2 class="font-press-start text-xl text-amber-400">MemeForge</h2>
-                    </div>
-                    <p class="font-vt323 text-lg mb-6">
-                        Forge the dankest memes known to the internet. A powerful tool for the modern digital blacksmith. Use responsibly.
-                    </p>
+                <div class="ab-buttons">
+                    <div id="b-button" class="button b-button">B</div>
+                    <div id="a-button" class="button a-button">A</div>
                 </div>
-                <a href="/meme-forge/index.html" class="mt-auto w-full text-center font-press-start text-lg bg-green-500 text-black py-3 rounded-md hover:bg-green-400 transition-colors duration-300 shadow-[0_5px_0_0_#00a82b] hover:shadow-[0_3px_0_0_#00a82b] hover:translate-y-[2px]">
-                    LAUNCH
-                </a>
             </div>
-
-            <!-- Future Project Slot -->
-            <div class="glass-card rounded-lg p-6 flex flex-col opacity-60 border-dashed">
-                <div class="flex-grow">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-4">🚧</span>
-                        <h2 class="font-press-start text-xl text-gray-400">PROJECT: [REDACTED]</h2>
-                    </div>
-                    <p class="font-vt323 text-lg mb-6 text-gray-500">
-                        Top secret experiment in progress. Signal unstable. Check back for future transmissions...
-                    </p>
-                </div>
-                <button disabled class="cursor-not-allowed mt-auto w-full text-center font-press-start text-lg bg-gray-700 text-gray-500 py-3 rounded-md">
-                    LOCKED
-                </button>
-            </div>
-
-            <!-- You can easily add more project cards here by copying one of the blocks above -->
-
-        </main>
-
-        <!-- Footer with a fun, scrolling message -->
-        <footer class="mt-16 w-full overflow-hidden">
-            <div class="relative h-8 bg-black border-2 border-green-500 rounded-md">
-                 <p class="absolute whitespace-nowrap text-lg font-vt323" id="scrolling-text">
-                    // HACKATHON STATUS: CAFFEINATED... // SYSTEM UPTIME: 42 HOURS... // CREATIVITY CORE: 110%... // WARNING: SLEEP NOT FOUND... //
-                </p>
-            </div>
-        </footer>
+        </div>
     </div>
 
     <script>
-        // Simple script to make the footer text scroll
-        const scrollText = document.getElementById('scrolling-text');
-        const container = scrollText.parentElement;
-        let position = container.offsetWidth;
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = Array.from(document.querySelectorAll('.project-card'));
+            const container = document.querySelector('.gba-container');
+            const dPadVertical = document.querySelector('.d-pad .vertical');
+            const dPadHorizontal = document.querySelector('.d-pad .horizontal');
+            const dPadButtons = document.querySelectorAll('.d-pad [data-direction]');
+            let currentIndex = -1; // -1 means no card is selected initially
 
-        function scroll() {
-            position--;
-            if (position < -scrollText.offsetWidth) {
-                position = container.offsetWidth;
+            // --- SELECTION LOGIC ---
+            function selectCard(index) {
+                const currentSelected = document.querySelector('.project-card.selected');
+                if (currentSelected) {
+                    currentSelected.classList.remove('selected');
+                }
+                if (index >= 0 && index < cards.length) {
+                    const newCard = cards[index];
+                    newCard.classList.add('selected');
+                    currentIndex = index;
+                } else {
+                    currentIndex = -1;
+                }
             }
-            scrollText.style.transform = `translateX(${position}px)`;
-            requestAnimationFrame(scroll);
-        }
+            
+            // --- ACTION LOGIC ---
+            function activateSelection() {
+                if (currentIndex !== -1) {
+                    const selectedCard = cards[currentIndex];
+                    const actionButton = selectedCard.querySelector('a, button');
+                    if (actionButton && !actionButton.disabled) {
+                        // Add press animation to the SELECT button
+                        actionButton.classList.add('pressed');
 
-        // Add a slight delay to ensure correct width calculation
-        window.onload = () => {
-             // To make the scroll seamless, duplicate the text
-            scrollText.innerText += " " + scrollText.innerText;
-            requestAnimationFrame(scroll);
-        };
+                        // Delay navigation slightly to allow animation to be visible
+                        setTimeout(() => {
+                            actionButton.click();
+                        }, 150);
+                    }
+                }
+            }
+
+            function deselectAll() {
+                selectCard(-1);
+            }
+
+            // --- A-BUTTON HANDLER ---
+            function handleAButtonPress() {
+                if (currentIndex === -1) {
+                    // If nothing is selected, select the first card.
+                    selectCard(0);
+                } else {
+                    // If a card is already selected, activate it.
+                    activateSelection();
+                }
+            }
+
+            // --- EVENT LISTENERS ---
+
+            // 1. Keyboard Navigation
+            container.addEventListener('keydown', (e) => {
+                if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Enter', 'a', 'A', 'b', 'B'].includes(e.key)) {
+                    e.preventDefault();
+                }
+
+                let newIndex = currentIndex;
+                if (currentIndex === -1 && ['ArrowLeft', 'ArrowRight'].includes(e.key)) {
+                    newIndex = 0;
+                } else {
+                    switch (e.key) {
+                        case 'ArrowRight':
+                            newIndex = (currentIndex + 1) % cards.length;
+                            break;
+                        case 'ArrowLeft':
+                            newIndex = (currentIndex - 1 + cards.length) % cards.length;
+                            break;
+                    }
+                }
+
+                if (['ArrowLeft', 'ArrowRight'].includes(e.key)) selectCard(newIndex);
+                
+                // Handle button press visuals
+                switch(e.key) {
+                    case 'ArrowUp': dPadVertical.classList.add('pressed'); break;
+                    case 'ArrowDown': dPadVertical.classList.add('pressed'); break;
+                    case 'ArrowLeft': dPadHorizontal.classList.add('pressed'); break;
+                    case 'ArrowRight': dPadHorizontal.classList.add('pressed'); break;
+                    case 'Enter': case 'a': case 'A':
+                        document.getElementById('a-button').classList.add('pressed');
+                        handleAButtonPress();
+                        break;
+                    case 'Escape': case 'b': case 'B':
+                        document.getElementById('b-button').classList.add('pressed');
+                        deselectAll();
+                        break;
+                }
+            });
+            
+            container.addEventListener('keyup', (e) => {
+                 switch(e.key) {
+                    case 'ArrowUp': dPadVertical.classList.remove('pressed'); break;
+                    case 'ArrowDown': dPadVertical.classList.remove('pressed'); break;
+                    case 'ArrowLeft': dPadHorizontal.classList.remove('pressed'); break;
+                    case 'ArrowRight': dPadHorizontal.classList.remove('pressed'); break;
+                    case 'Enter': case 'a': case 'A': document.getElementById('a-button').classList.remove('pressed'); break;
+                    case 'Escape': case 'b': case 'B': document.getElementById('b-button').classList.remove('pressed'); break;
+                 }
+            });
+
+            // 2. Mouse/Touch Click on Cards
+            cards.forEach(card => {
+                card.addEventListener('click', () => selectCard(parseInt(card.dataset.index, 10)));
+            });
+
+            // 3. D-Pad Clicks
+            dPadButtons.forEach(button => {
+                const direction = button.dataset.direction;
+                const targetBar = ['up', 'down'].includes(direction) ? dPadVertical : dPadHorizontal;
+
+                const press = (e) => { e.preventDefault(); targetBar.classList.add('pressed'); };
+                const release = (e) => { e.preventDefault(); targetBar.classList.remove('pressed'); };
+
+                button.addEventListener('mousedown', press);
+                button.addEventListener('mouseup', release);
+                button.addEventListener('mouseleave', release);
+                button.addEventListener('touchstart', press, { passive: false });
+                button.addEventListener('touchend', release, { passive: false });
+
+                button.addEventListener('click', () => {
+                    let newIndex = currentIndex === -1 ? 0 : currentIndex;
+                    if (direction === 'right') newIndex = (newIndex + 1) % cards.length;
+                    else if (direction === 'left') newIndex = (newIndex - 1 + cards.length) % cards.length;
+                    selectCard(newIndex);
+                });
+            });
+
+            // 4. A/B Button Clicks
+            document.getElementById('a-button').addEventListener('click', handleAButtonPress);
+            document.getElementById('b-button').addEventListener('click', deselectAll);
+            
+            // Focus the container to enable keyboard events immediately
+            container.focus();
+        });
     </script>
 </body>
 </html>
